@@ -9,7 +9,6 @@ class SignUp extends React.Component {
   state = {
     name: '',
     username: '',
-    mobile: '',
     email: '',
     password: '',
     messageFromServer: '',
@@ -25,14 +24,13 @@ class SignUp extends React.Component {
   };
   HandleSubmit = async (e) => {
     e.preventDefault();
-    const { name, username, mobile, email, password } = this.state;
+    const { name, username, email, password } = this.state;
     console.log(this.state, 'state');
     try {
-      const response = await axios.post('/signup', {
+      const response = await axios.post('http://localhost:5000/user/signup', {
         name,
         username,
         mobile,
-        email,
         password,
       });
       console.log(response.data.message);
@@ -60,7 +58,6 @@ class SignUp extends React.Component {
     const {
       name,
       username,
-      mobile,
       email,
       password,
       messageFromServer,
@@ -96,17 +93,6 @@ class SignUp extends React.Component {
                       placeholder='Username'
                       id='username'
                       name='username'
-                      required
-                      onChange={this.HandleChange}
-                    />
-                  </div>
-                  <div className='form-group col-md-8 offset-md-2 mt-4'>
-                    <input
-                      className='form-control'
-                      type='text'
-                      placeholder='Mobile Number'
-                      id='number'
-                      name='mobile'
                       required
                       onChange={this.HandleChange}
                     />
@@ -152,16 +138,6 @@ class SignUp extends React.Component {
                       Login
                     </Link>
                   </h6>
-
-                  {/* <h6>
-                    Are You an Admin?{' '}
-                    <Link
-                      to='/adminlogin'
-                      className='ml-1'
-                      style={{ color: 'coral' }}>
-                      Admin Login
-                    </Link>
-                  </h6> */}
                 </div>
                 {showError === true && loginError === true && (
                   <div style ={{color: "yellow"}}>
@@ -179,7 +155,6 @@ class SignUp extends React.Component {
               </div>
             </div>
           </div>
-          <div className='footer'> © 2020 Copyright: Stylisma.com</div>
         </div>
       );
     }

@@ -16,6 +16,36 @@ import '../App.css';
     }
    }
 
+  //  async commentLoginCheck() {
+  //   var user = JSON.parse(localStorage.getItem('user'));
+  //   if (user == null || undefined ) {
+  //     alert("Please login first")
+  //     return window.location.replace('/login');
+  //   }
+  //   else
+  //    this.handleCollapse();
+  //  }
+   
+   async handleCollapse() {
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+    
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var elems = document.getElementsByClassName('content');
+        for (var i=0;i<elems.length;i+=1){
+          if (elems[i].style.display === "block") {
+            elems[i].style.display = "none";
+          } else {
+            elems[i].style.display = "block";
+          }
+        }
+        
+      });
+    }
+   }
+
     render() {
       return (
 
@@ -34,23 +64,24 @@ import '../App.css';
 
             <div className="card">
               <div className="card-header">
-                 <span id ="floatLeft"><h6>Post_By {/* Username */}</h6> </span> <button className="btn btn-primary" onClick={() => this.loginCheck()} style={{"margin-left": "68%"}}> Follow</button> 
+                 <span id ="floatLeft"><h6>Post_By {/* Username */}</h6> </span> <button className="btn btn-primary" onClick={() => this.loginCheck()} style={{marginLeft: "68%"}}> Follow</button> 
               </div>
               <div className="card-body">
                 <p className="card-text"> Content {/* Content */}</p>
               </div>
               <div className="card-header">
-                <button  id ="floatLeft" className ="btn btn-success mr-2" type="button">Like  <span>Count {/* Count */}</span> </button>
-                <button  id ="floatLeft" className ="btn btn-primary" type="button">Comment</button>
+                <button  id ="floatLeft" className ="btn btn-success mr-2" onClick={() => this.loginCheck()} type="button">Like  <span>Count {/* Count */}</span> </button>
+                
+                <button  id ="floatLeft" className ="collapsible btn btn-primary" onClick={() => this.handleCollapse()} type="button">Comment</button>
+                
+              </div>
+              <div className="content">
+                  <p><strong><em>Username </em></strong> Comment </p>
+                  <p><textarea name="comment" placeholder="Write your comment" cols="50" rows="1"></textarea></p>
+                  <p><button className="btn btn-danger" onClick={() => this.loginCheck()}>Post</button></p>
               </div>
 
-              
-              <div class="content">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore ma
-                    gna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo cons
-                    equal.
-                </p>
-              </div>
+
             </div>
             <br/>
             <br/>

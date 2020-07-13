@@ -15,64 +15,53 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const { username, password, name, email } = req.body;
-  if (!username || !password || !name || !email) {
-    return res.status(400);
-  }
-  try {
-    let user = await User.create({
-      username,
-      password,
-      name,
-      email,
-    });
-    console.log(user);
-    res.status(201).json({
-      message: "success",
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400);
-  }
-});
+router.post('/signup', (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const data = {
+    name: req.body.name,
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password,
+  };
 
-router.put("/", async (req, res) => {
   try {
-    const id = req.body.id;
-    console.log(id);
-    let user = await User.update(
-      {
-        username,
-        password,
-        email,
-        name,
-      },
-      {
-        where: { id: id },
-      }
-    );
-    console.log(user);
-    res.send(user);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.delete("/", async (req, res) => {
-  try {
-    const id = req.body.id;
-    console.log("Body >> ", body);
-    const user = await User.destroy({
+    User.findOne({
       where: {
-        id: id,
+        username: data.username,
       },
+    }).then((user) => {
+      if (user != null) {
+        console.log('username already taken');
+        return res.send({
+          message: 'username already taken',
+        });
+      }
+      bcrypt.hash(data.password, 10).then((hashedPassword) => {
+        User.create({
+          username:data.username,
+          password: hashedPassword,
+          email: data.email,
+          name:data.name
+
+        }).then((user) => {
+          console.log('user created');
+          return res.send({
+            message:"user created",
+            user:user
+          })
+        });
+      });
     });
-    res.json({ user });
-  } catch (error) {
+    return res.status(200).json({
+      message: "success",
+      users: users,
+    });
+  }  catch (error) {
     console.log(error);
+    res.status(400);
   }
 });
 
-module.exports = router;
+
+
+module.exports = router
