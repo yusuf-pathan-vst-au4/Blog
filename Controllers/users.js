@@ -1,6 +1,9 @@
 const User = require("../Models/User");
 const express = require("express");
 const router = express.Router();
+// const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
+// const jwtSecret = require('../config/jwtConfig');
 
 router.get("/", async (req, res) => {
   try {
@@ -37,7 +40,7 @@ router.post('/signup', (req, res) => {
         });
       }
       bcrypt.hash(data.password, 10).then((hashedPassword) => {
-        User.create({
+        User.insert({
           username:data.username,
           password: hashedPassword,
           email: data.email,
@@ -53,14 +56,57 @@ router.post('/signup', (req, res) => {
       });
     });
     return res.status(200).json({
+      status: "200",
       message: "success",
-      users: users,
+      data: data,
     });
   }  catch (error) {
     console.log(error);
-    res.status(400);
+    res.status(400).json({
+      status: "400",
+      message: "error",
+      data: data,
+    });
   }
 });
+
+// router.post('/login', (req, res) => {
+//   const { username, password } = req.body;
+//   try {
+//     User.findOne({
+//       where: {
+//         username,
+//       },
+//     }).then((user) => {
+//       if (user == null) {
+//         console.log("USER: ",user)
+//         return res.json({ message: 'Incorrect username' });
+//       }
+//       bcrypt.compare(password, user.password).then((response) => {
+//         if (response !== true) {
+//           console.log('passwords do not match');
+//           return res.json({ message: 'passwords do not match' });
+//         }
+
+//         const token = jwt.sign({ id: user.username }, jwtSecret.secret, {
+//           expiresIn: 60 * 60,
+//         });
+//         console.log("Token: ", token)
+//         console.log('user found & authenticated');
+//         return res.json({ user: user,
+//         token: token,
+//       message: 'user found & logged in' });
+//       });
+//     });
+//   }  catch (error) {
+//     console.log(error);
+//     res.status(400).json({
+//       status: "400",
+//       message: "error",
+//       data: data,
+//     });
+//   }
+// });
 
 
 

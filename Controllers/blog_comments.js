@@ -6,6 +6,7 @@ router.get("/", async (req, res) => {
   try {
     let blog_comments = await Blog_Comments.findAll();
     return res.status(200).json({
+      status: "200",
       message: "success",
       users: blog_comments,
     });
@@ -15,62 +16,48 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const { userid, blogid, comment } = req.body;
-  if (!userid || !blogid || !comment) {
-    return res.status(400);
-  }
-  try {
-    let blog_comments = await Blog_Comments.create({
-      userid: userid,
-      blogid: blogid,
-      comment: comment,
-    });
-    console.log(blog_comments);
-    res.status(201).json({
-      message: "success",
-      blog_comments,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400);
-  }
-});
 
-router.put("/", async (req, res) => {
-  try {
-    const id = req.body.id;
-    console.log(id);
-    let blog_comments = await Blog_Comments.update(
-      {
-        blogid: blogid,
-        userid: userid,
-        comment: comment,
-      },
-      {
-        where: { id: id },
-      }
-    );
-    console.log(blog_comments);
-    res.send(blog_comments);
-  } catch (error) {
-    console.log(error);
-  }
-});
+router.post('/comments', (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const data = {
+    userid: req.body.userid,
+    blogid: req.body.blogid,
+    comment: req.body.comment,
+  };
 
-router.delete("/", async (req, res) => {
   try {
-    const id = req.body.id;
-    console.log("Body >> ", body);
-    const blog_comments = await Blog_Comments.destroy({
+    Blog.findOne({
       where: {
-        id: id,
+        userid: data.userid,
       },
+    }).then((data) => {
+      Blog.create({
+        userid:data.userid,
+        blogid: data.blogid,
+        comment: data.comment
+
+        }).then((data) => {
+          console.log('comment added');
+          return res.send({
+            message:"comment added",
+            data:data
+          })
+        });
     });
-    res.json({ blog_comments });
-  } catch (error) {
+    return res.status(200).json({
+      status: "200",
+      message: "success",
+      data: data,
+    });
+  }  catch (error) {
     console.log(error);
+    res.status(400).json({
+      status: "400",
+      message: "error",
+      data: data,
+    });
   }
 });
 
-module.exports = router;
+
+module.exports = router

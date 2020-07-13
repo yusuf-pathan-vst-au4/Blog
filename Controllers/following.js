@@ -1,12 +1,13 @@
-const Following = require("../Models/Following");
-const express = require("express");
+const Following = require('../Models/Following');
+const express = require('express');
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     let following = await Following.findAll();
     return res.status(200).json({
-      message: "success",
+      status: "200",
+      message: 'success',
       users: following,
     });
   } catch (error) {
@@ -14,61 +15,43 @@ router.get("/", async (req, res) => {
     res.status(400);
   }
 });
+router.post('/following', (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const data = {
+    userid: req.body.userid,
+    following: req.body.following,
+  };
 
-router.post("/", async (req, res) => {
-  const { userid, following } = req.body;
-  if (!userid || !following) {
-    return res.status(400);
-  }
   try {
-    let following = await Following.create({
-      userid,
-      following,
-    });
-    console.log(following);
-    res.status(201).json({
-      message: "success",
-      following,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400);
-  }
-});
-
-router.put("/", async (req, res) => {
-  try {
-    const id = req.body.id;
-    console.log(id);
-    let following = await Following.update(
-      {
-        userid,
-        following,
-      },
-      {
-        where: { id: id },
-      }
-    );
-    console.log(following);
-    res.send(following);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.delete("/", async (req, res) => {
-  try {
-    const id = req.body.id;
-    console.log("Body >> ", body);
-    const following = await Following.destroy({
+    Following.findOne({
       where: {
-        id: id,
+        userid: data.userid,
       },
+    }).then((data) => {
+      Following.create({
+          userid:data.username,
+          following: data.following
+
+        }).then((data) => {
+          console.log('started following');
+          return res.send({
+            message:"started following",
+            data:data
+          })
+        });
     });
-    res.json({ following });
-  } catch (error) {
+    return res.status(200).json({
+      status: "200",
+      message: "success",
+      data: data,
+    });
+  }  catch (error) {
     console.log(error);
+    res.status(400).json({
+      status: "400",
+      message: "error",
+      data: data,
+    });
   }
 });
-
-module.exports = router;
+module.exports = router

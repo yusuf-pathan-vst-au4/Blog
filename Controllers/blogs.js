@@ -1,12 +1,13 @@
-const Blog = require("../Models/Blogs");
-const express = require("express");
+const Blog = require('../Models/Blogs');
+const express = require('express');
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     let blogs = await Blog.findAll();
     return res.status(200).json({
-      message: "success",
+      status: "200",
+      message: 'success',
       users: blogs,
     });
   } catch (error) {
@@ -15,62 +16,47 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const { text, likes, post } = req.body;
-  if (!text || !likes || !post) {
-    return res.status(400);
-  }
-  try {
-    let blogs = await Blog.create({
-      text,
-      likes,
-      comment,
-    });
-    console.log(blogs);
-    res.status(201).json({
-      message: "success",
-      blogs,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400);
-  }
-});
 
-router.put("/", async (req, res) => {
-  try {
-    const id = req.body.id;
-    console.log(id);
-    let blogs = await Blog.update(
-      {
-        text,
-        likes,
-        comment,
-      },
-      {
-        where: { id: id },
-      }
-    );
-    console.log(blogs);
-    res.send(blogs);
-  } catch (error) {
-    console.log(error);
-  }
-});
+router.post('/blog', (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const data = {
+    text: req.body.text,
+    likes: req.body.likes,
+    post: req.body.post,
+  };
 
-router.delete("/", async (req, res) => {
   try {
-    const id = req.body.id;
-    console.log("Body >> ", body);
-    const blogs = await Blog.destroy({
+    Blog.findOne({
       where: {
-        id: id,
+        userid: data.userid,
       },
+    }).then((data) => {
+      Blog.create({
+          text:data.username,
+          likes: data.followers,
+          post: data.post
+
+        }).then((data) => {
+          console.log('post posted');
+          return res.send({
+            message:"post posted",
+            data:data
+          })
+        });
     });
-    res.json({ blogs });
-  } catch (error) {
+    return res.status(200).json({
+      status: "200",
+      message: "success",
+      data: data,
+    });
+  }  catch (error) {
     console.log(error);
+    res.status(400).json({
+      status: "400",
+      message: "error",
+      data: data,
+    });
   }
 });
 
-module.exports = router;
+module.exports = router
